@@ -1,0 +1,54 @@
+import React, { Component } from 'react';
+
+import PropTypes from'prop-types';
+
+import './App.css';
+class App extends Component {
+	constructor(props) {
+        super(props);
+        this.state = { value: '' }
+    }
+	
+	getChildContext() {
+        return {
+            value: this.state.value,
+            changeValue: this.changeValue
+        }
+    }
+
+	 changeValue = value => {
+        this.setState({ value })
+    }
+
+	render() {
+		return (
+			<div className="App">
+				<Son></Son>
+			</div>
+		);
+	}
+	
+}
+App.childContextTypes = {
+    value: PropTypes.string,
+    changeValue: PropTypes.func
+}
+class Son extends Component {
+	 handleChange = (e) => {
+        const { changeValue } = this.context
+        changeValue(e.target.value)
+    }
+	render() {
+		return (
+			<div>
+				 <input onChange={this.handleChange} />
+				  <p>{this.context.value}</p>
+			</div>
+		);
+	}
+}
+Son.contextTypes = {
+	changeValue: PropTypes.func,
+	value: PropTypes.string
+}
+export default App;
