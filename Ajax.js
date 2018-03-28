@@ -74,3 +74,11 @@ const Ajax = {
 }
 
 export default Ajax;
+
+
+//使用
+Ajax.get( url )
+        .then((res) => {
+            console.log(res.data);
+            that.handleSuccess(res.data, alertId);
+})
