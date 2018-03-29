@@ -1,0 +1,15 @@
+//type 1  bind to window 
+componentDidMount() {
+    window.addEventListener('scroll',this.handleScroll.bind(this))
+}
+componentWillUnmount() {
+    window.removeEventListener('scroll',this.handleScroll.bind(this))
+}
+
+
+
+// type2  bind to div
+<div ref={(e)=>this.containerDidMount(e)}>
+</div>
+
+containerDidMount (e) {}
