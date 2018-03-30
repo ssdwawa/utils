@@ -77,6 +77,7 @@ export default Ajax;
 
 
 //使用
+import Ajax from ' ..... '
 Ajax.get( url )
         .then((res) => {
             console.log(res.data);
