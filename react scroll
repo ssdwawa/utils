@@ -12,4 +12,28 @@ componentWillUnmount() {
 <div ref={(e)=>this.containerDidMount(e)}>
 </div>
 
-containerDidMount (e) {}
+containerDidMount (e) {
+
+        if (e) {
+            e.addEventListener('scroll', () => {
+                let page = this.state.pageNum
+                if (e.scrollHeight > 0 && e.clientHeight + e.scrollTop == e.scrollHeight && this.state.loading) {
+                    this.setState({
+                        loading: false
+                    })
+                    page++
+                    setTimeout(() => {
+                        axiosHttp.get(`${apiConfig.getEmail}?page=${page}`).then((res) => {
+                            this.props.updataMail(res.data.data)
+                            if (res.data.data.length == 9) {
+                                this.setState({
+                                    loading: true,
+                                    pageNum: page
+                                })
+                            }
+                        });
+                    }, 500);
+                }
+            })
+        }
+}
