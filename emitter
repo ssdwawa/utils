@@ -1,0 +1,30 @@
+// event.js
+import { EventEmitter } from 'events';
+export default new EventEmitter();
+
+
+// send js
+import emitter from './events';
+
+Axios.interceptors.request.use(function(response){
+    emitter.emit('showLoding',true)
+    return response;
+})
+Axios.interceptors.response.use(response => {
+    emitter.emit('showLoding',false)
+    return response;
+}, error => {}
+
+// accept js
+ componentDidMount() {
+    emitter.addListener('showLoding', this.showLoading);
+ }
+ componentWillUnmount() {
+     emitter.removeListener('showLoding', this.showLoading);
+ }
+ 
+ showLoading = type => {
+        this.setState({
+            showLoading: type
+        })
+    }
