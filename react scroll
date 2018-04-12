@@ -9,6 +9,11 @@ componentWillUnmount() {
 
 
 // type2  bind to div
+state={
+     loading:true,
+     pageNum:1
+}
+
 <div ref={(e)=>this.containerDidMount(e)}>
 </div>
 
