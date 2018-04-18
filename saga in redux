@@ -1,0 +1,182 @@
+//在saga里面
+import { fromJS } from 'immutable';
+import * as types from '../constants/ActionTypes';
+import API from '../api';
+import { setItem } from '../utils/functions';
+import Ajax from '../utils/ajax';
+
+
+//内部函数
+const loginRequest = (params) => {
+    return Ajax.post(API.login, params)
+};
+
+const loginRedirect = () => {
+    console.log('redirect');
+    window.location.href = '/';
+};
+
+
+const logoutRedirect = () => {
+    window.location.href = '/login';
+};
+
+const logout = () => {
+    return Ajax.get(API.logout)
+        .then(res => res.data);
+};
+
+
+//外部用的部分
+export const actions = {
+    post( params ) {
+        return {
+            type: types.LOGIN_POST,
+            params
+        };
+    },
+
+    loginSuccess( params ) {
+        return {
+            type: types.LOGIN_SUCCESS,
+            params
+        };
+    },
+    loginFail( params ) {
+        return {
+            type: types.LOGIN_FAILURE,
+            params
+        };
+    },
+    logOut() {
+        return {
+            type: types.LOGOUT
+        };
+    },
+
+    logoutSuccess() {
+        return {
+            type: types.LOGOUT_SUCCESS
+        };
+    }
+};
+
+
+//异步请求
+const login = {
+    state: 'login',
+
+    effects: {
+        * [types.LOGIN_POST](action, { call, put }) {
+            try {
+                const response = yield call(loginRequest, action.params);
+                if(response.status==200){
+                    yield put(actions.loginSuccess(response));
+                }
+                else if(response.status==400){
+                    yield put(actions.loginFail(response));
+                }
+            } catch(error) {
+                yield put({type: 'LOGIN_FAILURE', error});
+            }
+        },
+
+        * [types.LOGIN_SUCCESS](action, { put }) {
+            const JET_TOKEN = action.params.data.data.token;
+            try {
+                JET_TOKEN && setItem('JWT', JET_TOKEN);
+                JET_TOKEN && loginRedirect();
+            } catch(error) {
+                yield put({type: 'LOGIN_FAILURE', error});
+            }
+        },
+
+        * [types.LOGOUT](action, { call, put }) {
+            try {
+                const response = yield call(logout, action.params);
+                yield put(actions.logoutSuccess(response));
+            } catch(error) {
+                yield put({type: 'LOGOUT_FAILURE', error});
+            }
+        },
+
+        * [types.LOGOUT_SUCCESS](action, { put }) {
+            try {
+                logoutRedirect();
+            } catch(error) {
+                yield put({type: 'LOGIN_FAILURE', error});
+            }
+        },
+    },
+
+    // store仓库
+    reducer: [fromJS({
+        isFetching: false,
+        status: 'logout',
+        wrongCode:''
+    }), {
+
+        [types.LOGIN_POST](state) {
+            return state
+                .setIn(['isFetching'], true );
+        },
+
+        [types.LOGIN_SUCCESS](state) {
+            return state
+                .setIn(['isFetching'], false )
+                .set('status', 'login');
+        },
+
+        [types.LOGIN_FAILURE](state,action) {
+            return state
+                .setIn(['isFetching'], false )
+                .set('status', 'failure')
+                .set('wrongCode', action.params.status);
+        },
+        [types.LOGOUT](state) {
+            return state
+                .setIn(['isFetching'], true );
+        },
+
+        [types.LOGOUT_SUCCESS](state) {
+            return state
+                .setIn(['isFetching'], false )
+                .set('status', 'logout');
+        },
+    }]
+};
+
+export default login;
+
+
+//在文件中
+import { connect } from 'react-redux';
+import { actions } from 'Models/login';
+import { createForm } from 'rc-form';
+
+
+ handleClick = () => {
+        console.log(this.email);
+        const email = this.email.props.value;
+        const password = this.password.props.value;
+        const { login: { isFetching }, dispatch } = this.props;
+        
+        if( isFetching ) {
+            return;
+        }else{
+            console.log('denglu');
+            dispatch(actions.post({email, password}));
+        }
+    }
+
+
+
+
+
+function mapStateToProps( state ) {
+    return {
+        login: state.login.toJS()
+    };
+}
+
+export default connect(mapStateToProps)(createForm()(Login));
