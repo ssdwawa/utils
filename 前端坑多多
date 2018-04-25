@@ -1,0 +1,9 @@
+1.react写搜索
+  input 用e.target.value 别用ref
+  settimeout这样写：
+    searchName (v) {
+        let value = v.target.value
+        setTimeout(() => {
+            console.log(value)
+        }, 500);
+    }
