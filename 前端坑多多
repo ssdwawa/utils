@@ -19,3 +19,8 @@
   date.getHours();  // 获取小时数(0-23)
   date.getMinutes();  // 获取分钟数(0-59)
   date.getSeconds();  // 获取秒数(0-59)
+
+
+3.正则王
+const regex = /.*?@.*?\.com$|\.cn$|\.org$|\.net$/;
+regex.test( this.refs.mail.value)
