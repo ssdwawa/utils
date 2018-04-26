@@ -30,3 +30,20 @@ regex.test( this.refs.mail.value)
 4. react 神坑ref
 获取值insight:this.summary.textAreaRef.value
 得到值ref={el => this.summary = el}
+
+5. antd table
+<Table dataSource={this.state.userData} columns={columns} onRowClick={(v) => { this.choiceUser(v) }} pagination={this.state.pagination} onChange={(v) => this.handleTableChange(v)} />
+  handleTableChange(v) {
+        if(v.current!==this.state.pagination.current){
+            ajax.get(`${apiConfig.getUserList}?page=${v.current}`).then((res) => {
+                const userData=this.changeData(res.data.data.users);
+                const pagination = this.state.pagination;
+                pagination.current = v.current;
+                this.setState({
+                    userData: userData,
+                    pagination: pagination
+                });
+            })
+        }
+        
+    }
