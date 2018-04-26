@@ -24,3 +24,9 @@
 3.正则王
 const regex = /.*?@.*?\.com$|\.cn$|\.org$|\.net$/;
 regex.test( this.refs.mail.value)
+
+
+
+4. react 神坑ref
+获取值insight:this.summary.textAreaRef.value
+得到值ref={el => this.summary = el}
