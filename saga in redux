@@ -169,7 +169,8 @@ import { createForm } from 'rc-form';
         }
     }
 
-
+//获得数据
+this.props.login.wrongCode
 
 
 
