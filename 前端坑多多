@@ -166,7 +166,7 @@ regex.test( this.refs.mail.value)
       height: 36.15vw;
   }
 
-8li:before{
+8.li:before{
     content:'';
     display: inline-block;
     width: .65rem;
@@ -174,4 +174,7 @@ regex.test( this.refs.mail.value)
     border-radius: 50%;
     background-color: #000;
     margin-right: 0.7rem;
+}
+li:hover::before{
+    background-color: rgb(255, 117, 51);
 }
