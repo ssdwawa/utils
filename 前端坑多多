@@ -178,3 +178,23 @@ regex.test( this.refs.mail.value)
 li:hover::before{
     background-color: rgb(255, 117, 51);
 }
+9.react 滚动条触发修改样式
+handleScroll(e){
+		let scrollTop = e.srcElement.body.scrollTop;
+		const line1=document.getElementsByClassName('line1')[0]
+		if(scrollTop<200 &&scrollTop>=1){
+			let he = 400-scrollTop;
+			let fs = 50-(scrollTop/10);
+			let ml= scrollTop*100/300;
+			let op = 1-scrollTop/150;
+			setTimeout(() =>{
+				this.refs.lineo.style.height=`${he}px`;
+				if(scrollTop>0){
+					this.refs.lineo.style.fontSize=`${fs}px`;
+					this.refs.ao.style.marginLeft=`${ml}%`;
+					this.refs.ao.style.opacity=`${op}`;
+				}
+
+			}, 200);
+		}
+	}
