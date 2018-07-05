@@ -198,3 +198,24 @@ handleScroll(e){
 			}, 200);
 		}
 	}
+	
+10.react父组件向子组件传方法
+父组件中
+<ControlButton cancel={(v)=>this.cancelButtonList(v)} buttons={buttonList} />
+其中buttonList为
+const buttonList =taskType?[
+    {name:'Add Comment',click: this.AddComment,css:'button-top'},
+    {name:'New Task',click: this.NewTask,css:'button-bottom'}
+]:[
+    {name:'Add Comment',click: this.AddComment,css:'button-top'},
+    {name:'Edit',click: this.Edit,css:null},
+    {name:'Close the task',click: this.CloseTheTask,css:null},
+    {name:'New Task',click: this.NewTask,css:'button-bottom'}
+]
+
+子组件中
+{this.props.buttons.map((v,i)=>(
+ <div key={i} className={`button-item ${v.css}`} onClick={()=>v.click()}>
+    {v.name}
+</div>
+))}
