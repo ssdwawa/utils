@@ -219,3 +219,12 @@ const buttonList =taskType?[
     {v.name}
 </div>
 ))}
+11.react hover
+onMouseOver={this.changeHover}
+onMouseOut={this.changeHover}
+
+changeHover = () => {
+    this.setState(
+      prevState => ({ hover: !prevState.hover })
+    )
+  }
