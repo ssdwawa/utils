@@ -219,6 +219,7 @@ const buttonList =taskType?[
     {v.name}
 </div>
 ))}
+
 11.react hover
 onMouseOver={this.changeHover}
 onMouseOut={this.changeHover}
@@ -228,3 +229,13 @@ changeHover = () => {
       prevState => ({ hover: !prevState.hover })
     )
   }
+
+12.图片的伸缩
+实现图片两边的可舍弃但是高度不能舍弃
+图片外面包一层定好min-height
+.wrap{
+  min-height:500px;
+  img{
+   .....
+  }
+}
