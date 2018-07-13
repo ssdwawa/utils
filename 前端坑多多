@@ -239,3 +239,25 @@ changeHover = () => {
    .....
   }
 }
+
+13.react子向父传参
+  子：
+  hideMap=()=>{
+     this.props.hideMap(false)
+  }
+   
+   父：
+   <子 hideMap={this.hideMap}/>
+    hideMap = async (data) =>{
+        await this.setState({
+            toTop: data
+        })
+        setTimeout(() => {
+            this.setState({
+                showMap: data
+            })
+        }, 1000);
+    }
+   
+
+
