@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import './index.less';
+import history from '../../../utils/history.js';
 
 export default class PdfItem extends Component {
   constructor(props) {
