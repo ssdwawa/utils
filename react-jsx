@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
+import Navigation from '../../../components/navigation/index.js';
 import './index.less';
 import history from '../../../utils/history.js';
 
