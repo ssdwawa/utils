@@ -259,5 +259,15 @@ changeHover = () => {
         }, 1000);
     }
    
+14.浏览器离开事件
+ window.onbeforeunload = function (e) {
+    e = e || window.event;
 
+    if (e) {
+	debugger
+	localStorage.setItem('testz', 'test2')
+    }
+};
 
+15.ract路由传参
+https://www.jianshu.com/p/8cf549616f86
