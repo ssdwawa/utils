@@ -271,3 +271,32 @@ changeHover = () => {
 
 15.ract路由传参
 https://www.jianshu.com/p/8cf549616f86
+
+16.禁止事件
+window.addEventListener("keydown", (e) => {
+    e = window.event || e;
+    if (event.keyCode == 116 || e.ctrlKey   &&   e.keyCode==82) {
+	e.preventDefault()
+	return false;
+    }
+});
+
+// document.oncontextmenu = function(){ return false;}
+
+17.篡改localStorage使之可以监听同页面下的Storage变化
+	var orignalSetItem = localStorage.setItem;
+	localStorage.setItem = function (key, newValue) {
+	    var setItemEvent = new Event("setItemEvent");
+	    setItemEvent.key = key;
+	    setItemEvent.newValue = newValue;
+	    window.dispatchEvent(setItemEvent);
+	    orignalSetItem.apply(this, arguments);
+	}
+	window.addEventListener("setItemEvent", (e) => {
+	    if (e.key == 'auth') {
+		console.log(e)
+		this.setState({
+		    auth: e.newValue
+		})
+	    }
+	});
