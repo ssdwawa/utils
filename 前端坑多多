@@ -300,3 +300,16 @@ window.addEventListener("keydown", (e) => {
 		})
 	    }
 	});
+18.图片预加载
+let imgArr = [
+	    '../../images/Thought Leadership/Asset 1.png', '../../images/Thought Leadership/Asset 2.png',
+	    '../../images/Thought Leadership/Asset 3.png','../../images/Thought Leadership/Asset 4.png',
+	    '../../images/Thought Leadership/Asset 5.png','../../images/Thought Leadership/Asset 6.png',
+	    '../../images/Thought Leadership/Asset 7.png','../../images/Thought Leadership/Asset 8.png'
+	]
+	let imgwrap=[]
+	for (var i = 0; i<imgArr.length ; i++){
+	    imgwrap[i] = new Image()
+	    let src =  require('../../images/Thought Leadership/Asset ' + (i + 1) + '.png')
+	    imgwrap[i].src = src
+	}
