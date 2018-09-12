@@ -313,3 +313,5 @@ let imgArr = [
 	    let src =  require('../../images/Thought Leadership/Asset ' + (i + 1) + '.png')
 	    imgwrap[i].src = src
 	}
+19.得到css中的transform:
+ var wd =  $('.rotator').css('transform').split(',')[4]
