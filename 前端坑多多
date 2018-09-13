@@ -315,3 +315,8 @@ let imgArr = [
 	}
 19.得到css中的transform:
  var wd =  $('.rotator').css('transform').split(',')[4]
+ 
+ 
+20.操作视频
+this.video.pause()
+        let intervalRwd = setInterval(()=>(this.video.currentTime -= .03), 30);
