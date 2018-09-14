@@ -320,3 +320,11 @@ let imgArr = [
 20.操作视频
 this.video.pause()
         let intervalRwd = setInterval(()=>(this.video.currentTime -= .03), 30);
+
+21.postmesshe
+	window.parent.postMessage(JSON.stringify('/DataGx'), "*")
+
+	window.onmessage = (e)=>{
+            let data =JSON.parse(e.data)
+            history.push(data)
+        }
