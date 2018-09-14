@@ -247,7 +247,7 @@ changeHover = () => {
   }
    
    父：
-   <子 hideMap={this.hideMap}/>
+   <子 hideMap={(data)=>this.hideMap(data)}/>
     hideMap = async (data) =>{
         await this.setState({
             toTop: data
