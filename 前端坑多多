@@ -328,3 +328,8 @@ this.video.pause()
             let data =JSON.parse(e.data)
             history.push(data)
         }
+22.背景图片
+    width: 100vw;
+    height: 92vh;
+    background: url('../../images/HZ/Home_bg2.png') no-repeat center center ;
+    background-size: cover;
