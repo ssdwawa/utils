@@ -1,0 +1,871 @@
+(function ($) {
+  let lan = 'en';
+  const i18nPkg = {};
+  $.when(
+    $.getJSON('/static/data/i18n/i18n_en.json', function (res) {
+      i18nPkg.en = res;
+    }),
+    $.getJSON('/static/data/i18n/i18n_cn.json', function (res) {
+      i18nPkg.cn = res;
+    })
+  ).then(function () {
+    /**
+     * [loadLanguage description]
+     * @return {[type]} [description]
+     */
+    const loadLanguage = function () {
+      setTimeout(function () {
+        $("[i18n]").i18n({
+          defaultLang: lan,
+          filePath: "/static/data/i18n/",
+          filePrefix: "i18n_",
+          fileSuffix: "",
+          forever: true,
+          callback: function () {}
+        })
+      }, 100);
+    }
+
+    /**
+     * 移动端应用使用了framework7的一些基础功能
+     * 应用分为两个部分，对应着两个路由
+     * 注册路由的信息写在本文件
+     *   const app = new Framework7({
+     * 的部分中
+     *
+     * 没有完成的ajax 功能用setTimeout 方法暂时替代了
+     */
+    let homePageInitialized = false;
+    const homePageInit = function () {
+      /**
+       * 页面上下滑动时用来切换页面Navbar中的标题
+       * @param {String} title 标题文案
+       */
+      $('html').removeClass('md');
+      const setSectionTitle = function (title, page) {
+
+        $('#sectionTitle').html(title);
+        $('.navigation a').removeClass('selected');
+        $(`.nav-page-${page}`).addClass('selected');
+      }
+
+      /*
+      基于pageSlider插件创建pageSlider实例，首页中垂直上下滑动、用来展示会议信息的页面组
+      pageSlider插件在index.html的顶部通过script标签引入
+      这个插件在
+      https://github.com/Franslee/pageSlider
+      的基础上做了一些支持scroll的改动
+     */
+      const pageSlider = window.PageSlider.case({
+        range: 70,
+        elastic: false,
+        startPage: 4,
+        callback: {
+          1: function () {
+            setSectionTitle('', 1)
+          },
+          2: function () {
+            setSectionTitle(i18nPkg[lan]['i18n.about'], 2)
+          },
+          3: function () {
+            setSectionTitle(i18nPkg[lan]['i18n.speakers'], 3)
+          },
+          4: function () {
+            setSectionTitle(i18nPkg[lan]['i18n.schedule'], 4)
+          },
+          5: function () {
+            setSectionTitle(i18nPkg[lan]['i18n.venue'], 5);
+            $('.map a').on('click', function (event) {
+              window.location.href = $(this).attr('href');
+            });
+          },
+          6: function () {
+            setSectionTitle(i18nPkg[lan]['i18n.contract'], 6)
+          }
+        }
+      });
+      window.pageSlider = pageSlider;
+
+      /**
+       * 通过导航栏切换页面
+       */
+      $('.navigation a').on('click', function () {
+        const page = $(this).attr('data-page');
+        pageSlider.go(page);
+      });
+      /**
+       * 在.section > article 元素中的文案会因为过长导致article出现滚动条
+       * 但pageSlider的原始插件因为垄断了touchstart 等事件的回调处理导致这个article 的滚动条无法工作
+       * 下面的代码块帮助pageSlider 兼容了它下一层article 的滚动效果
+       * 同时在pageSlider.js中也有一些改动
+       */
+      (function () {
+        let parentSectionTouchStarted = false;
+        let articleStartY;
+
+        $('.section > article').off('touchstart').on('touchstart', function (event) {
+          articleStartY = event.touches[0].clientY;
+          event.stopPropagation();
+        });
+
+        //
+        $('.section > article').off('touchmove').on('touchmove', function (event) {
+          const totalScrollTop = this.scrollTop + this.clientHeight;
+          const touch = event.touches[0];
+
+          if (
+            (totalScrollTop === this.scrollHeight && touch.clientY < articleStartY) ||
+            (this.scrollTop === 0 && touch.clientY > articleStartY)
+          ) {
+            if (!parentSectionTouchStarted) {
+              pageSlider.touchStartTrigger(pageSlider, event.touches[0], this.parentElement);
+              parentSectionTouchStarted = true;
+            }
+
+            pageSlider.touchMoveTrigger(pageSlider, event.touches[0], this.parentElement);
+            event.preventDefault();
+          }
+
+          event.stopPropagation();
+        });
+
+        //
+        $('.section > article').on('scroll', function (event) {
+          if (this.scrollTop < 0) {
+            this.scrollTop = 0;
+            return;
+          }
+
+          const totalScrollTop = this.scrollTop + this.clientHeight;
+
+          if (totalScrollTop > this.scrollHeight) {
+            this.scrollTop = this.scrollHeight - this.clientHeight;
+            return;
+          }
+        });
+
+        $('.tcx1').on('click',function(e){
+          console.log($('.ssd-make').scrollTop())
+        })
+
+        //
+        $('.section > article').off('touchend').on('touchend', function (event) {
+          const that = this;
+          event.stopPropagation();
+          articleStartY = undefined;
+
+          if (parentSectionTouchStarted) {
+            parentSectionTouchStarted = false;
+            pageSlider.touchEndTrigger(pageSlider, this.parentElement, function () {
+              that.scrollTop = 0;
+            });
+          }
+        });
+      })($);
+
+      /**
+       * 初始化speaker 信息
+       * 这些speaker 的信息以js对象的形式保存在static/data/data.js 文件中，
+       * 并通过index.html 头部的script标签引入
+       */
+      (function ($) {
+        const speakersData = window.sncData.speakers;
+        const $speakerList = $('#speakerList');
+        $speakerList.html('');
+
+
+        const closeSpeakerCard = function () {
+          pageSlider.go(3);
+          const $card = $('.speaker-card');
+          $('.sec3>article').append($card.parent());
+          setTimeout(function () {
+            $card.parent().removeClass('spread');
+          }, 9)
+        }
+
+        $('.speaker-card_shrinker').click(function (event) {
+          closeSpeakerCard();
+        });
+
+        //
+        const loadDataIntoSpeakerCard = function (item) {
+          $('#speakerAvatar').html(`<img src="${item.avatar}" />`);
+          $('#speakerName').html(`<span>${item.name}</span>`);
+          $('#speakerTitle').html(i18nPkg[lan][item.title]);
+          $('#speakerIntroduction').html(i18nPkg[lan][item.introduction]);
+
+          $('.speaker-btn').removeClass('active');
+          $(`#speaker-${item.id}`).addClass('active');
+        }
+
+        //
+        speakersData.forEach(function (item) {
+          const newSpeakerAvatarBtn = $(`
+            <a id='speaker-${item.id}' class='speaker-btn' href="javascript:void(0)">
+              <img src="${item.avatar}" />
+            </a>
+          `);
+
+          $(newSpeakerAvatarBtn).on('click', function () {
+            loadDataIntoSpeakerCard(item);
+          });
+
+          const newSpeakerItem = $(`<li></li>`);
+          newSpeakerItem.append(newSpeakerAvatarBtn);
+
+          $speakerList.append(newSpeakerItem)
+        });
+
+        //
+        $('.speaker-card').on('click', function () {
+          const that = this;
+          if (!$(this).parent().hasClass('spread')) {
+            //   closeSpeakerCard();
+            // } else {
+            $('.view-main').append($(this).parent());
+            setTimeout(function () {
+              $(that).parent().addClass('spread');
+            })
+          }
+        });
+
+        loadDataIntoSpeakerCard(speakersData[0]);
+      })($)
+
+      // 点击左上角的会议logo 会返回第一个滚动页面
+      $('#sncHome').on('click', function () {
+        pageSlider.go(1);
+      });
+
+      //   alert((navigator.platform.indexOf("iPhone") != -1) ||
+      //      (navigator.platform.indexOf("iPad") != -1) ||
+      //      (navigator.platform.indexOf("iPod") != -1))
+      //   if /* if we're on iOS, open in Apple Maps */
+      //     ((navigator.platform.indexOf("iPhone") != -1) ||
+      //      (navigator.platform.indexOf("iPad") != -1) ||
+      //      (navigator.platform.indexOf("iPod") != -1))
+      //     window.open("maps://maps.google.com/maps/place/%E6%88%90%E9%83%BD%E5%8D%8E%E5%B0%94%E9%81%93%E5%A4%AB%E9%85%92%E5%BA%97/@30.5851323,104.0654653,16z/data=!4m7!3m6!1s0x36efc5d8bebebe21:0x45c86d15b5b865e1!5m1!1s2018-09-16!8m2!3d30.5844201!4d104.0688487?hl=en");
+      //   else /* else use Google */
+      //     window.open("http://www.google.cn/maps/place/%E6%88%90%E9%83%BD%E5%8D%8E%E5%B0%94%E9%81%93%E5%A4%AB%E9%85%92%E5%BA%97/@30.5851323,104.0654653,16z/data=!4m7!3m6!1s0x36efc5d8bebebe21:0x45c86d15b5b865e1!5m1!1s2018-09-16!8m2!3d30.5844201!4d104.0688487?hl=en");
+      // });
+
+      let date = new Date();
+      let now = date.getTime();
+
+      //设置截止时间
+      let str = "2018/11/2 00:00:00";
+      let endDate = new Date(str);
+      let end = endDate.getTime();
+
+      //时间差
+      let leftTime = end - now;
+      if (leftTime > 0) {
+        let day = Math.floor(leftTime / 1000 / 60 / 60 / 24);
+        document.getElementById("count_num").innerHTML = day;
+      } else {
+        document.getElementById("count_num").innerHTML = '0';
+      }
+
+    }
+
+    const registerPageInit = function () {
+      (function ($$, $) {
+        loadLanguage();
+        $$(document).on('page:back', '.smart-select-page', function () {
+          // console.log('smart select page close')
+        });
+
+        // post信息
+        let postMsg = {};
+
+        const refreshCountryCodeSelector = function () {
+          let HTMLCodeInCountryCodeSelect = '';
+          const chosenValue = $('#countryCodeInput').val();
+
+          window.sncData.countries.forEach(item => {
+            const {
+              dial_code,
+              name
+            } = item;
+            const selected = chosenValue === item.dial_code ? 'selected' : '';
+
+            HTMLCodeInCountryCodeSelect += `
+              <option value="${dial_code}" ${selected}>
+                ${name} ${dial_code}
+              </option>
+            `;
+          });
+
+          $('#countryCodeSelect').html(HTMLCodeInCountryCodeSelect);
+        };
+        refreshCountryCodeSelector();
+
+        /**
+         * 在注册页面点击区号按钮之后会弹出区号的select 框，
+         * select 的options 会由下面的程序通过对countries 变量遍历生成
+         * countries 变量定义在 static/data/data.js 中，描述了一些国家名称和区号之间的关系
+         */
+        $('#countryCode').on('click', function (event) {
+          // 用户在弹窗中选择区号之后，这个区号的值被写入#countryCode 的input 的value
+          $$(document.body).on('change', 'select', function (e) {
+            const value = $$(this).val();
+            $('#countryCode input').val(value);
+            refreshCountryCodeSelector();
+          });
+        });
+
+        // 价格计算
+        let totalPrice = 1000;
+        $('#registerPrice').html(`¥ ${totalPrice}`);
+        $('#registerForm input[type=checkbox]').on('change', function () {
+          const event_banquet = $($('#registerForm')[0].event_banquet).is(':checked');
+          const event_results = $($('#registerForm')[0].event_results).is(':checked');
+
+          totalPrice = 1000 + (event_banquet || event_results ? 1000 : 0);
+          $('#registerPrice').html(`¥ ${totalPrice}`);
+        });
+
+
+        // $(".registerBtn").on("hover", function () {
+        //     app.dialog.alert("fuck you!", "title");
+        //     return false;
+        // });
+
+        /**
+         * 点击Review and Pay 按钮
+         */
+        $('#reviewTrigger').on('click', function () {
+          $.ajaxSettings.async = false;
+          $.getJSON($SCRIPT_ROOT + '/check_count', {},
+            function (check_result) {
+              if (check_result.excess === 'true') {
+                app.dialog.alert("All tickets has been exhausted!", "Sorry");
+                return false;
+              } else {
+                const form = $('#registerForm')[0];
+                /**
+                 * 表单input 的内容
+                 * @type {String}
+                 */
+                const firstName = form.first_name.value;
+                const lastName = form.last_name.value;
+                const email = form.email.value;
+                const countryCode = form.country_code.value;
+                const phone = form.phone.value;
+                const institution = form.institution.value;
+                const title = form.title.value;
+
+                /**
+                 * 行程的checkbox
+                 * @type {Boolean}
+                 */
+                const event_main_conference = $(form.event_main_conference).is(':checked');
+                const event_banquet = $(form.event_banquet).is(':checked');
+                const event_results = $(form.event_results).is(':checked');
+
+                // 初始化表单验证工具
+                const validationInstance = new Validator();
+                // 添加表单校验规则
+                validationInstance
+                  .add({
+                    value: firstName
+                  }, [{
+                    strategy: 'isNonEmpty',
+                    errorMsg: i18nPkg[lan]['i18n.firstNameEmpty']
+                  }])
+                  .add({
+                    value: lastName
+                  }, [{
+                    strategy: 'isNonEmpty',
+                    errorMsg: i18nPkg[lan]['i18n.lastNameEmpty']
+                  }])
+                  .add({
+                    value: email
+                  }, [{
+                    strategy: 'isNonEmpty',
+                    errorMsg: i18nPkg[lan]['i18n.emailEmpty']
+                  }, {
+                    strategy: 'validateEmail',
+                    errorMsg: i18nPkg[lan]['i18n.emailFormat']
+                  }])
+                  .add({
+                    value: phone
+                  }, [{
+                    strategy: 'isNumber',
+                    errorMsg: i18nPkg[lan]['i18n.phoneNum']
+                  }])
+                  .add({
+                    value: institution
+                  }, [{
+                    strategy: 'isNonEmpty',
+                    errorMsg: i18nPkg[lan]['i18n.institutionEmpty']
+                  }])
+                  .add({
+                    value: title
+                  }, [{
+                    strategy: 'isNonEmpty',
+                    errorMsg: i18nPkg[lan]['i18n.titleFormat']
+                  }]);
+
+                const validateResult = validationInstance.start();
+                if (typeof validateResult === 'string') {
+                  app.dialog.alert(validateResult, i18nPkg[lan]['i18n.validationFailed']);
+                  return;
+                }
+
+                $.ajaxSettings.async = false;
+                $.getJSON($SCRIPT_ROOT + '/check_email', {
+                  'email': email
+                }, function (check_result) {
+                  if (check_result.duplicated === 'true') {
+                    app.dialog.alert('This email is duplicated!', 'Validation failed');
+                    return false;
+                  } else {
+                    $.ajaxSettings.async = false;
+                    $.getJSON($SCRIPT_ROOT + '/submit_data', {
+                      'first_name': firstName,
+                      'last_name': lastName,
+                      'email': email,
+                      'phone': countryCode + phone,
+                      'org': institution,
+                      'title': title,
+                      'banquet': event_banquet,
+                      'presentation': event_results,
+                    }, function (data) {
+                      $('#registrationForm').hide();
+                      $('#registrationReview').show();
+                      $('#registrationComplete').hide();
+                      $('#registrationFailed').hide();
+
+                      $('#review_userName').text(`${firstName} ${lastName}`);
+                      $('#review_userEmail').text(email);
+                      $('#review_userPhone').text(`${countryCode}${phone}`);
+                      $('#review_userInstitution').text(institution);
+                      $('#review_userTitle').text(title);
+
+                      const activitiesContainerHTML = (event_main_conference ? `<li>NOV 3rd: Main Conference Event</li>` : ``) +
+                        (event_banquet ? `<li>NOV 3rd: Banquet ( Optional  )</li>` : ``) +
+                        (event_results ? `<li>NOV 4th : Results Presentation ( Optional )</li>` : ``) +
+                        `
+                <li class="review-total-price">
+                  <span>Total Price: </span>
+                  <span class="review_total-price-value" id="review_totalPrice">¥ 2000</span>
+                </li>
+              `;
+
+                      $('#activitiesContainer').html(activitiesContainerHTML);
+                      // app.dialog.preloader('Loading');
+                      app.dialog.close();
+
+                      $("#order-num").empty();
+                      $("#order-num").append(data.tid);
+
+                      let hidden_form = document.getElementById("hidden-form");
+                      for (let key in data) {
+                        let input = document.createElement("input");
+                        input.name = key;
+                        input.value = data[key];
+                        hidden_form.appendChild(input);
+                      }
+
+                    });
+                  }
+                });
+
+              }
+            });
+        });
+
+        // $('#payTrigger').on('click', function() {
+        //   // postMsg
+        //   // 这里模拟了post 注册信息的ajax 信息请求
+        //   app.dialog.preloader('Loading');
+        //   (function(success) {
+        //     setTimeout(function() {
+        //       $('#registrationForm').hide();
+        //       $('#registrationReview').hide();
+        //       if (success) {
+        //         $('#registrationComplete').show();
+        //         $('#registrationFailed').hide();
+        //       } else {
+        //         $('#registrationComplete').hide();
+        //         $('#registrationFailed').show();
+        //       }
+        //       app.dialog.close();
+        //     }, 500)
+        //   })(true);
+        // });
+
+        $('button[data-activeid=backToRegistration]').on('click', function () {
+
+          $('#registrationForm').show();
+          $('#registrationReview').hide();
+          $('#registrationComplete').hide();
+          $('#registrationFailed').hide();
+        });
+
+      })(Dom7, $)
+    };
+
+
+    /**
+     * 初始化Framework7 app, 返回实例
+     * @type {Framework7}
+     */
+    const app = new Framework7({
+      // App root element
+      root: '#app',
+      // App Name
+      name: 'My App',
+      // App id
+      id: 'com.myapp.test',
+      // Enable swipe panel
+      panel: {
+        swipe: 'left',
+      },
+      material: false,
+      // Add default routes
+      routes: [{
+          path: '/',
+          url: '/static/views/home.html',
+          on: {
+            pageAfterIn: function (event, page) {
+              homePageInitialized || homePageInit();
+              homePageInitialized = true;
+            }
+          },
+        },
+        {
+          path: '/register',
+          url: '/static/views/register.html',
+          on: {
+            pageAfterIn: function (event, page) {
+              registerPageInit();
+            }
+          }
+        },
+      ]
+    });
+
+    const mainView = app.views.create('.view-main');
+
+    // $("[i18n]").i18n({
+    //   defaultLang: lan,
+    //   filePath: "/static/data/i18n/",
+    //   filePrefix: "i18n_",
+    //   fileSuffix: "",
+    //   forever: true,
+    //   callback: function() {
+    //   }
+    // });
+    loadLanguage();
+
+    $('#changeLang').on('click', function (e) {
+      lan = lan === 'en' ? 'cn' : 'en';
+
+      $("[i18n]").i18n({
+        defaultLang: lan,
+        filePath: "/static/data/i18n/",
+        filePrefix: "i18n_",
+        fileSuffix: "",
+        forever: true,
+        callback: function () {
+          $('.map a').on('click', function (event) {
+            window.location.href = $(this).attr('href');
+          });
+        }
+      });
+
+      $.getJSON($SCRIPT_ROOT + '/mobile_lang', {
+        'lang': lan
+      }, function (data) {
+        return data.status;
+      })
+
+    })
+  })
+})(jQuery);
+
+<div class="section sec4">
+      <!-- <article>
+        <h4 class="schedule-title" i18n="i18n.day1">DAY 1 (Nov 2)</h4>
+        <p i18n="i18n.day1Schedule">
+          day1Schedule
+        </p>
+        <h4 class="schedule-title" i18n="i18n.day2">DAY 2 (Nov 3)</h4>
+        <p i18n="i18n.day2Schedule">
+          day2Schedule
+        </p>
+        <h4 class="schedule-title" i18n="i18n.day3">DAY 3 (Nov 4)</h4>
+        <p i18n="i18n.day3Schedule">
+          day3Schedule
+        </p>
+      </article> -->
+      <article class="ssd-make">
+        <div class="segmented segmented-raised fixx">
+          <a class="button tcx1 tab-link cc tab-link-active" href="#tab1">NOV 2</a>
+          <a class="button tcx2 tab-link cc" href="#tab2">NOV 3</a>
+          <a class="button tcx3 tab-link cc" href="#tab3">NOV 4</a>
+        </div>
+        <div class=" hide-navbar-on-scroll">
+          <div class="tabs">
+            <div class="tab tab-active" id="tab1">
+              <div class="block">
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="tab" id="tab2">
+              <div class="block">
+                <div class="item item-1">
+                  <div class="time">
+                    <span class="ci"></span>
+                    <span class="ti">07:30</span>
+                  </div>
+                  <p class="tab-title">
+                    Industry Leader Breakfast
+                  </p>
+                  <p class="tab-content">
+                    <span class="table-blue">
+
+                    </span>
+                    Hosted by Chengdu Government
+                  </p>
+                </div>
+
+              </div>
+            </div>
+            <div class="tab" id="tab3">
+              <div class="block">
+                <p>Etiam non interdum erat. Curabitur erat lacus...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+    
+    
+    /* ssd make */
+.ssd-make{
+  padding: 0 0 150px 0 !important;
+  margin-top: 4rem;
+}
+.ios .subnavbar{
+  background: #fff;
+}
+
+.ios .subnavbar-inner {
+  padding: 0;
+}
+.fixx{
+  width: 100%;
+  position: fixed!important;
+  top: 6%;
+  left: 0%;
+  z-index: 999;
+  background: #fff;
+  box-shadow: 0 1px 4px 0 rgba(124,135,157,0.15);
+}
+
+
+.segmented > a{
+  height: 44px !important;
+  line-height: 50px !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.cc{
+  font-family: Lato;
+  color: #2A2888 !important;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.ios .button.tab-link-active {
+  background: #fff;
+  border-bottom: 3px solid #2A2888 !important;
+}
+
+.tabs{
+  margin-top: 53px;
+}
+.ios .block {
+  margin: -9px 0;
+  padding: 0;
+  color: #6d6d72;
+}
+
+.tabs .block .item{
+  /* background: red; */
+  padding: 15px 0px 15px 35px;
+  margin-left: 30px;
+  border-left: 2px solid rgba(42,40,136,.2);
+  position: relative;
+  border-bottom: 1px solid #E2E5E7;
+}
+.tabs .block .item .time{
+  position: absolute;
+  left: -2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.item-1 .time{
+  top: 2.4rem;
+}
+
+.tabs .block .item .time .ci{
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(106,104,190,1);
+  border: 2px solid #fff;
+}
+
+
+.tabs .block .item .time .ti{
+  display: block;
+  font-size: 16px;
+  color: #323232;
+  font-weight: 400;
+  margin-top: 5px;
+  background: #fff;
+}
+.tab-title{
+  margin:  0;
+  font-size: 18px;
+  color: #000;
+  font-weight: 400;
+}
+.tab-content{
+  margin:  0;
+  font-weight: 300;
+  font-size: 14px;
+  color: #646464;
+  line-height: 25px;
+}
+
