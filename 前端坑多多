@@ -337,3 +337,16 @@ this.video.pause()
     import { withLastLocation } from 'react-router-last-location';
     export default withLastLocation(ChallengeSolutionResult)
 
+24.qq浏览器软键盘问题
+	if ((/Android/gi).test(navigator.userAgent)) {
+        var winHeight = $(window).height(); //获取当前页面高度
+        $(window).resize(function () {
+            var thisHeight = $(this).height();
+            if (winHeight - thisHeight > 50) {
+                $('.wrap').css('transform', 'translate(0,-150px)');
+            } else {
+                $('.wrap').css('transform', 'translate(0,0)');
+            }
+        });
+    }
+
