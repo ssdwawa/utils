@@ -360,3 +360,8 @@ function getQueryVariable(variable) {
     }
     return (false);
 }
+
+26.localstorage的读写
+	localStorage.setItem('userInfo',JSON.stringify(userInfo))
+	var cacheUser = JSON.parse(localStorage.getItem('userInfo'));
+
