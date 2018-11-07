@@ -372,3 +372,10 @@ function getQueryVariable(variable) {
 	    <tr><td>${addr.last}</td></tr>
 	  `).join('')}
 	  </table>
+
+28.react 路由技巧
+	 this.props.match.path.replace(/\:stage\?/, 1)可以改变路由状态，并且触发render
+	 在render()里面可以 match.params获得改变的参数
+	 
+	 
+	 
