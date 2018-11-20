@@ -377,5 +377,12 @@ function getQueryVariable(variable) {
 	 this.props.match.path.replace(/\:stage\?/, 1)可以改变路由状态，并且触发render
 	 在render()里面可以 match.params获得改变的参数
 	 
+29.ANTD 日期这么玩
+      某几天可用
+	 const dates = ['2018-11-10', '2018-11-12', '2018-11-20']
+	 disabledDate={(current) => !dates.includes(moment(current).format('YYYY-MM-DD'))}
+      范围不可用
+      	 disabledDate={(current) => (current && current < moment('2018-10-26').startOf('day') || current && current > moment('2018-10-26').endOf('day'))}
+	 
 	 
 	 
