@@ -384,5 +384,17 @@ function getQueryVariable(variable) {
       范围不可用
       	 disabledDate={(current) => (current && current < moment('2018-10-26').startOf('day') || current && current > moment('2018-10-26').endOf('day'))}
 	 
-	 
-	 
+30.react-mobx 渲染jsx
+	 const leadingRootCauseUI = leadingRootCause && leadingRootCause.data.map(v => {
+	    let element = null;
+	    if( v.Trend == -1 ){
+		element = <Icon type='down' style={{ color: 'red' }} />
+	    }else if( v.Trend == 1 ){
+		element = <Icon type='up' style={{ color: 'green' }} />;
+	    }
+	    return  {
+		...v,
+		Trend: element
+	    };
+	})
+
