@@ -397,4 +397,8 @@ function getQueryVariable(variable) {
 		Trend: element
 	    };
 	})
+31.避免重复render
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.flag !== this.props.flag);
+    }
