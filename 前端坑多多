@@ -402,3 +402,21 @@ function getQueryVariable(variable) {
     shouldComponentUpdate(nextProps, nextState) {
         return (nextProps.flag !== this.props.flag);
     }
+    
+32.HighChart 操作数据
+ plotOptions: {
+    series: {
+      animation: false
+    },
+    bar: {
+      dataLabels: {
+	enabled: true,
+	formatter: function () {
+	  var pcnt = (this.y /  nextProps.graphData.sum) * 100;
+	  return `${this.y}  (${Highcharts.numberFormat(pcnt)}%)`;
+	}
+      },
+      enableMouseTracking: false,
+    },
+  },
+
