@@ -1,0 +1,15 @@
+1.快速分辨复杂多层循环
+
+def ComprehensiveChart(arry):
+    data = []
+    for key, value in arry.items():
+        //我想拿每一行内的数据，并把他们筛选进一个数组，所以我在第一层循环就加入筛选条件
+        innerValue = []
+        innerName = []
+        for item in value.iterrows():
+            innerValue.append(item[1][2])
+            innerName.append(item[1][1])
+        line_data = {'series': [{'data': innerValue, 'name': 'value'}], 'categories': innerName,
+                     'total_name': value.values.tolist()[0][-1],'sum':sum(innerValue) }
+        data.append(line_data)
+    return data
