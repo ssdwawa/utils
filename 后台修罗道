@@ -18,8 +18,23 @@ def ComprehensiveChart(arry):
     （1）操作dataFrame
         取值dataFrame.values[1:]  取表头dataFrame.columns[1:]  转数组用.tolist()
         大块取出带表头 dataFrame.ix[:, 1:]
+        
+        按行遍历
+         for index, row in arry.iteritems():
+            data.append([index, int(row)])
+         return data
+         
+         
+         按列遍历
+         for index, row in arry.iterrows():
+            data.append([index, int(row)])
+         return data
+         
          
      (2) Series 操作
          for index, row in arry.items():
             data.append([index, int(row)])
          return data
+
+3.数组操作
+    for index, value in enumerate(arry):
