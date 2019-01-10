@@ -38,3 +38,22 @@ def ComprehensiveChart(arry):
 
 3.数组操作
     for index, value in enumerate(arry):
+    
+4.大杂烩
+    
+path = "./source"  # 文件夹目录
+files = os.listdir(path)  # 得到文件夹下的所有文件名称
+f = open('result.csv', 'w',encoding="utf-8")
+for file in files:  # 遍历文件夹
+    file_object = open(path + '/' + file, encoding="utf8")
+    content = file_object.read()
+    re_rule_front_half = '(".*?"):'
+    re_rule_back_half = ':\s*(".*?"),'
+    front_half = re.compile(re_rule_front_half).findall(str(content))
+    back_half = re.compile(re_rule_back_half).findall(str(content))
+    print(back_half)
+    f.write('file_name,' + file + '\n')
+    for value_1, value_2 in zip(front_half, back_half):
+
+        f.write(value_1 + ',' + value_2 + '\n')
+f.close()
