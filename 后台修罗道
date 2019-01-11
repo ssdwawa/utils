@@ -30,6 +30,9 @@ def ComprehensiveChart(arry):
             data.append([index, int(row)])
          return data
          
+         多条件筛选
+         df[(df["grade"] == "B") & (df["loan_amnt"]>5000), ["member_id", "term" , "loan_amnt", "grade","sub_grade", "int_rate"]]
+         
          
      (2) Series 操作
          for index, row in arry.items():
