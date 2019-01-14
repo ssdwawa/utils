@@ -18,6 +18,9 @@ def ComprehensiveChart(arry):
     （1）操作dataFrame
         取值dataFrame.values[1:]  取表头dataFrame.columns[1:]  转数组用.tolist()  取每行的名字list(df.index)
         大块取出带表头 dataFrame.ix[:, 1:]
+        取第一列的值
+        result_1.iloc[:,0].tolist(),
+        
         
         按行遍历
          for index, value in arry.iterrows():
