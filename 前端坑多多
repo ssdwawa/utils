@@ -427,3 +427,5 @@ table tr {
 table tr td {
 	display: block;
 }
+34.滚动条不纠结
+ window.scrollTo(0, 0);
