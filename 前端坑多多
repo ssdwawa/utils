@@ -429,3 +429,17 @@ table tr td {
 }
 34.滚动条不纠结
  window.scrollTo(0, 0);
+ 
+ 35.对象操作
+    动态设置对象名
+    selectData (type , value){
+ 	const name = type
+        let params={
+            [name]:value
+        }
+    }
+    
+    拿对象的值
+     <span>{Object.keys(v)[0]}</span>
+     <span>{Object.values(v)[0]}</span>
+    
