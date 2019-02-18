@@ -443,3 +443,5 @@ table tr td {
      <span>{Object.keys(v)[0]}</span>
      <span>{Object.values(v)[0]}</span>
     
+36.env
+ NODE_PATH=src/
