@@ -445,3 +445,9 @@ table tr td {
     
 36.env
  NODE_PATH=src/
+
+37.sort
+res.data.sort(function(a,b){
+        var order = ["OKRI", "Key Risk Analysis and Trending", "Financial Reporting", "Global Process Delivery", "Regulatory and Tex Service",'Global Product Delivery',"Headcount", "Turnover&Overtime"];
+	return order.indexOf(a.name) - order.indexOf(b.name);
+})
