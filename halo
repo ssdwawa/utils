@@ -28,3 +28,6 @@ function f1(callback){
 f1(f2); //
 
 f3();
+
+
+// 高级一点用 webwoker
