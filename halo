@@ -5,5 +5,26 @@
  
  b(){
  var value = 'test'
-  a()
+  a()  //undefined
  }
+ 
+ 2.执行异步
+ 
+//最原始的写法-同步写法
+
+f1(); //耗时很长，严重堵塞
+f2(); //得等f1的执行结果
+f3(); //导致f3执行受到影响
+
+
+//改进版-异步写法
+function f1(callback){
+　　setTimeout(function () {
+　　　　// f1的任务代码
+　　　　callback();
+　　}, 1000);
+}
+
+f1(f2); //
+
+f3();
