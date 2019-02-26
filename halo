@@ -1,33 +1,48 @@
  1.函数中调用另一个函数的时候并不改变那个函数的作用域
- a(){
-  print(value)
- }
- 
- b(){
- var value = 'test'
-  a()  //undefined
- }
+   a(){
+    print(value)
+   }
+
+   b(){
+    var value = 'test'
+    a()  //undefined
+   }
  
  2.执行异步
  
-//最原始的写法-同步写法
+   //最原始的写法-同步写法
 
-f1(); //耗时很长，严重堵塞
-f2(); //得等f1的执行结果
-f3(); //导致f3执行受到影响
-
-
-//改进版-异步写法
-function f1(callback){
-　　setTimeout(function () {
-　　　　// f1的任务代码
-　　　　callback();
-　　}, 1000);
-}
-
-f1(f2); //
-
-f3();
+   f1(); //耗时很长，严重堵塞
+   f2(); //得等f1的执行结果
+   f3(); //导致f3执行受到影响
 
 
-// 高级一点用 webwoker
+   //改进版-异步写法
+   function f1(callback){
+     setTimeout(function () {
+       // f1的任务代码
+       callback();
+     }, 1000);
+   }
+
+   f1(f2); //
+
+   f3();
+
+
+   // 高级一点用 webwoker
+
+3.虚拟DOM概念
+  3.1 什么是虚拟DOM？
+      在React中，render执行的结果得到的并不是真正的DOM节点，结果仅仅是轻量级的JavaScript对象，我们称之为virtual DOM。
+  3.2 虚拟DOM VS 直接操作原生DOM？
+      如果没有 Virtual DOM，简单来说就是直接重置 innerHTML。这样操作，在一个大型列表所有数据都变了的情况下，还算是合理，
+      但是，当只有一行数据发生变化时，它也需要重置整个 innerHTML，这时候显然就造成了大量浪费。     
+      
+      js 调用dom是dom给了js api,这个过程的开销很大，而用虚拟DOM完全在js引擎中。虚拟DOM进行频繁修改，然后一次性比较并修改真实DOM中需要改的部分（注意！）
+      ，最后并在真实DOM中进行排版与重绘，减少过多DOM节点排版与重绘损耗     
+      
+      React.js 相对于直接操作原生DOM有很大的性能优势， 很大程度上都要归功于virtual DOM的batching 和diff。batching把所有的DOM操作搜集起来，一次性提交给真实的DOM。
+      diff算法时间复杂度也从标准的的Diff算法的O(n^3)降到了O(n)。
+      
+      React 从来没有说过 “React 比原生操作 DOM 快”。React给我们的保证是，在不需要手动优化的情况下，它依然可以给我们提供过得去的性能。
