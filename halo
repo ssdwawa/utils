@@ -10,6 +10,18 @@
  
  2.执行异步
  
+    var xhr = new XMLHttpRequest();
+	    xhr.open('POST', url, true);   //第三个参数决定是否采用异步的方式
+	    xhr.send(data);
+	    xhr.onreadystatechange = function(){
+		if(xhr.readystate === 4 && xhr.status === 200){
+			///xxxx
+		}
+    }
+    
+    上面是一个代码，浏览器在发起一个ajax请求，会单开一个线程去发起http请求，这样的话就能把这个耗时的过程单独去自己跑了，在这个线程的请求过程中，
+    readystate 的值会有个变化的过程，每一次变化就触发一次onreadystatechange 函数，进行判断是否正确拿到返回结果。
+ 
    //最原始的写法-同步写法
 
    f1(); //耗时很长，严重堵塞
