@@ -52,3 +52,34 @@
       再加上更新（移动、创建、删除）时需要遍历一次，所以是O(n^3)。
       
       react 的吧每个层编号，按层比较，不一样直接替换
+      
+      
+ 5.promise
+      理解一下promise
+       //示例
+       function getURL(URL) {
+         return new Promise(function (resolve, reject) {
+           var req = new XMLHttpRequest(); 
+           req.open('GET', URL, true);           
+           req.onload = function () {
+                 if (req.status === 200) {
+                      resolve(req.responseText);
+                 } else {
+                   reject(new Error(req.statusText));
+                 }
+          };
+         req.onerror = function () { 
+             reject(new Error(req.statusText));
+         };
+         req.send();
+        });
+       }
+       // 运行示例
+       var URL = "http://baidu.com";    
+       getURL(URL)
+       .then(function onFulfilled(value){
+         console.log(value); 
+       })
+       .catch(function onRejected(error){
+           console.error(error);
+       });
