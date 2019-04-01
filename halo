@@ -21,7 +21,7 @@
    function f1(callback){
      setTimeout(function () {
        // f1的任务代码
-       callback();
+       callback(f1的结果);
      }, 1000);
    }
 
@@ -56,30 +56,81 @@
       
  5.promise
       理解一下promise
-       //示例
-       function getURL(URL) {
-         return new Promise(function (resolve, reject) {
-           var req = new XMLHttpRequest(); 
-           req.open('GET', URL, true);           
-           req.onload = function () {
-                 if (req.status === 200) {
-                      resolve(req.responseText);
-                 } else {
-                   reject(new Error(req.statusText));
-                 }
-          };
-         req.onerror = function () { 
-             reject(new Error(req.statusText));
-         };
-         req.send();
-        });
-       }
-       // 运行示例
-       var URL = "http://baidu.com";    
-       getURL(URL)
-       .then(function onFulfilled(value){
-         console.log(value); 
-       })
-       .catch(function onRejected(error){
-           console.error(error);
-       });
+      var promise=new Promsie(function(resolve,rejec){
+          if(/*异步执行成功*/){
+              resolve(value);
+          }else{
+              reject(error);
+          }
+      })
+      
+     .then(function(){
+       //回调执行成功之后的操作
+       },function(){
+       //回调执行失败之后的操作，可以没有
+     });
+     
+     
+     理解源码
+ function Promise(fn) {
+			var state = 'pending',
+				value = null,
+				callbacks = [];
+
+			this.then = function (onFulfilled) {
+				return new Promise(function (resolve) {
+					if (state === 'pending') {
+						callbacks.push(function (data) {
+							var x = onFulfilled(value)
+							if (x instanceof Promise) {
+								x.then(resolve)
+							}
+						});
+						return
+					}
+					onFulfilled(value);
+				});
+			};
+
+			function resolve(newValue) {
+				value = newValue;
+				state = 'fulfilled';
+				setTimeout(function () {
+					callbacks.forEach(function (callback) {
+						callback(value);
+					});
+				}, 0);
+			}
+
+			fn(resolve);
+		}
+
+		new Promise(
+				function (resolve) {
+					// 模拟异步请求
+					setTimeout(() => {
+						resolve(10)
+					}, 1000);
+				}
+			)
+			.then(function (a) {
+				console.log(a)
+				return new Promise(
+					function (resolve) {
+						// 模拟异步请求
+						setTimeout(() => {
+							resolve(15)
+						}, 1000);
+					}
+				)
+			})
+			.then(function (e) {
+				console.log(e)
+			})
+
+
+
+
+		//看着是resolve比then先执行，但是resolve中setTimeout了所以实际上是then中先push、resolve再遍历
+		//状态机制是为了判断是否是异步
+		//链式Promise机制在then中return Promise
