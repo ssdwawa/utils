@@ -85,64 +85,109 @@
      
      理解源码
  function Promise(fn) {
-			var state = 'pending',
-				value = null,
-				callbacks = [];
+	var state = 'pending',
+		value = null,
+		callbacks = [];
 
-			this.then = function (onFulfilled) {
-				return new Promise(function (resolve) {
-					if (state === 'pending') {
-						callbacks.push(function (data) {
-							var x = onFulfilled(value)
-							if (x instanceof Promise) {
-								x.then(resolve)
-							}
-						});
-						return
+	this.then = function (onFulfilled) {
+		return new Promise(function (resolve) {
+			if (state === 'pending') {
+				callbacks.push(function (data) {
+					var x = onFulfilled(value)
+					if (x instanceof Promise) {
+						x.then(resolve)
 					}
-					onFulfilled(value);
 				});
-			};
-
-			function resolve(newValue) {
-				value = newValue;
-				state = 'fulfilled';
-				setTimeout(function () {
-					callbacks.forEach(function (callback) {
-						callback(value);
-					});
-				}, 0);
+				return
 			}
+			onFulfilled(value);
+		});
+	};
 
-			fn(resolve);
+	function resolve(newValue) {
+		value = newValue;
+		state = 'fulfilled';
+		setTimeout(function () {
+			callbacks.forEach(function (callback) {
+				callback(value);
+			});
+		}, 0);
+	}
+
+	fn(resolve);
+}
+
+new Promise(
+	function (resolve) {
+		// 模拟异步请求
+		setTimeout(() => {
+			resolve(10)
+		}, 1000);
+	}
+)
+.then(function (a) {
+	console.log(a)
+	return new Promise(
+		function (resolve) {
+			// 模拟异步请求
+			setTimeout(() => {
+				resolve(15)
+			}, 1000);
 		}
+	)
+})
+.then(function (e) {
+	console.log(e)
+})
 
-		new Promise(
-				function (resolve) {
-					// 模拟异步请求
-					setTimeout(() => {
-						resolve(10)
-					}, 1000);
+
+
+
+//看着是resolve比then先执行，但是resolve中setTimeout了所以实际上是then中先push、resolve再遍历
+//状态机制是为了判断是否是异步
+//链式Promise机制在then中return Promise
+
+promise.all
+
+// 写法1
+function fun1(num = -1) {
+ 
+    // 在fun1中返回一个promise对象
+    return new Promise(function(resolve, reject) {
+        // 为了体现是异步接口，这里使用一个定时器，延迟3秒
+        setTimeout(resolve, 3000, 'fun1');
+    })
+};
+ 
+function fun2(num2 = 200) {
+    // 在fun2中也返回一个promise对象
+    return new Promise(function(resolve, reject) {
+        // 为了和fun1区分开来，fun2延迟1秒
+        setTimeout(resolve, 1000, 'fun2');
+    })
+}
+ 
+// 由于fun1和fun2是方法，所以使用fun1()执行该方法
+Promise.all([fun1(), fun2()]).then(function(result) {
+    console.log(result) // 输入应该为 ['fun1','fun2']
+    
+源码手写
+Promise.all = arr => {
+	let aResult = []; //用于存放每次执行后返回结果
+	return new Promise(function (resolve, reject) {
+		let i = 0;
+		next(); //开始逐次执行数组中的函数
+		function next() {
+			arr[i].then(function (res) {
+				aResult.push(res); //执行后返回的结果放入数组中
+				i++;
+				if (i == arr.length) { //如果函数数组中的函数都执行完，便把结果数组传给then
+					resolve(aResult);
+				} else {
+					next();
 				}
-			)
-			.then(function (a) {
-				console.log(a)
-				return new Promise(
-					function (resolve) {
-						// 模拟异步请求
-						setTimeout(() => {
-							resolve(15)
-						}, 1000);
-					}
-				)
 			})
-			.then(function (e) {
-				console.log(e)
-			})
+		}
+	})
+}
 
-
-
-
-		//看着是resolve比then先执行，但是resolve中setTimeout了所以实际上是then中先push、resolve再遍历
-		//状态机制是为了判断是否是异步
-		//链式Promise机制在then中return Promise
