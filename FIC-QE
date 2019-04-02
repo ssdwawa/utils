@@ -1,18 +1,5 @@
-1.当test实例化时,会打印什么
-   function test(){
+1.this指向问题
 
-      function test(){
-        console.log(this)
-      }
-
-      test()
-    }
-
-
-    var p = new test()
-    
-    
-    
    function a(){
       var user = "追梦子";
       console.log(this.user); //undefined
