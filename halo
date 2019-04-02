@@ -84,37 +84,39 @@
      
      
      理解源码
- function Promise(fn) {
-	var state = 'pending',
-		value = null,
-		callbacks = [];
+ function Promise(exec) {
+	var _this = this
+	_this.value = undefined;
+	_this.state = 'pending';
+	_this.callBacks = []
 
-	this.then = function (onFulfilled) {
-		return new Promise(function (resolve) {
-			if (state === 'pending') {
-				callbacks.push(function (data) {
-					var x = onFulfilled(value)
-					if (x instanceof Promise) {
-						x.then(resolve)
-					}
-				});
-				return
-			}
-			onFulfilled(value);
-		});
-	};
-
-	function resolve(newValue) {
-		value = newValue;
-		state = 'fulfilled';
-		setTimeout(function () {
-			callbacks.forEach(function (callback) {
-				callback(value);
+	function resolve(data) {
+		setTimeout(() => {
+			_this.value = data;
+			_this.state = 'resolve';
+			_this.callBacks.forEach(element => {
+				element(data)
 			});
 		}, 0);
 	}
+	exec(resolve)
+}
 
-	fn(resolve);
+Promise.prototype.then = function (exec) {
+	var _this = this
+	return new Promise(function (resolve) {
+		if (_this.state == 'pending') {
+			_this.callBacks.push(function (data) {
+				var x = exec(data)
+				if (x instanceof Promise) {
+					x.then(resolve)
+				}
+			})
+			return
+		}
+
+		exec(resolve)
+	})
 }
 
 new Promise(
@@ -146,6 +148,7 @@ new Promise(
 //看着是resolve比then先执行，但是resolve中setTimeout了所以实际上是then中先push、resolve再遍历
 //状态机制是为了判断是否是异步
 //链式Promise机制在then中return Promise
+//then的作用是往云上加功能，而resolve则是调用云上的功能实现了同步
 
 promise.all
 
