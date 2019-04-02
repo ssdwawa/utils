@@ -6,3 +6,12 @@
       console.log(this); //Window
    }
    a();
+   
+   var obj={
+       a:1,
+       b:function(){alert(this.a)} //undefined
+   }
+   var fun=obj.b
+   fun()  // => window.fun()
+   
+   *this没有作用域的限制，嵌套的函数不会从调用它的函数中继承this。
