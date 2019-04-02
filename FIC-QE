@@ -14,4 +14,30 @@
    var fun=obj.b
    fun()  // => window.fun()
    
+   
+   function fun1(){
+       // f 实例化fun1(), 这里的this指的是fun1对象本身
+       console.log(this);
+       function fun2(){
+           //没有实例化fun2(), 直接调用，这里的this指的是window对象
+           console.log(this);
+       }
+       fun2();
+
+       function fun3(){
+            //a实例化fun3(), 这里的this指的是对象本身
+           console.log(this);
+       }
+       var a = new fun3();
+   }
+
+   var f = new fun1();
+
+   //输出的结果如下
+
+   >> fun1 {} 
+   >> window {}
+   >> fun3 {}
+
+   
    *this没有作用域的限制，嵌套的函数不会从调用它的函数中继承this。
