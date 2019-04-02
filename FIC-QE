@@ -1,0 +1,14 @@
+1.当test实例化时,会打印什么
+   function test(){
+
+      this.name = 'ssd'
+
+      function test(){
+        console.log(this.name)
+      }
+
+      test()
+    }
+
+
+    var p = new test()
