@@ -149,6 +149,7 @@ new Promise(
 //状态机制是为了判断是否是异步
 //链式Promise机制在then中return Promise
 //then的作用是往云上加功能，而resolve则是调用云上的功能实现了同步
+//x.then(resolve)是迷点 记住它，本质是在return的promise中再then拿结果
 
 promise.all
 
