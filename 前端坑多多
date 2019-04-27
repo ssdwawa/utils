@@ -513,3 +513,8 @@ dv.onmouseup = function() {
 var json = {颜色: "1708480395608103", 蓝色: "1708742016288631"};
 var keyArr = Object.keys(json);
 var val = json[keyArr[0]];
+
+41.数组接近
+	arr.sort(function(a, b) {
+	  return Math.abs(a - N) - Math.abs(b - N);
+	})[0];
