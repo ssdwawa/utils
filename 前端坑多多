@@ -507,3 +507,9 @@ dv.onmouseup = function() {
     isDown = false;
     dv.style.cursor = 'default';
 }
+
+40.js 读取对象
+
+var json = {颜色: "1708480395608103", 蓝色: "1708742016288631"};
+var keyArr = Object.keys(json);
+var val = json[keyArr[0]];
