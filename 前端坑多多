@@ -518,3 +518,9 @@ var val = json[keyArr[0]];
 	arr.sort(function(a, b) {
 	  return Math.abs(a - N) - Math.abs(b - N);
 	})[0];
+	
+42.hover防抖
+	hover出现的元素.style('pointer-events', 'none')
+	
+43.金融三分位
+	toLocalstring()
