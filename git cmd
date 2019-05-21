@@ -41,4 +41,33 @@ firewall-cmd --permanent --zone=public --add-port=3306/tcp
 
 如果要关闭防火墙设置，可能通过systemctl stop firewalld这条指令来关闭该功能。
 
+net start myql 
+
+1.查看mysql数据库是否运行 
+systemctl status mysqld
+
+2.进入数据库 
+mysql -u用户名 -p 密码
+
+3.查看数据库中的数据库 
+show databases;
+
+4.使用某个数据库 
+use 数据库名字;
+
+5.显示数据库中的表 
+show tables;
+
+6.查看某个表的所有字段 
+select * from 表名
+
+7.添加用户 
+create user 用户名称 identified by 密码
+
+8.授权某一个数据库的所有权限给指定用户 
+grant all on 数据库名称 to 用户名称
+
+
+
+
 
