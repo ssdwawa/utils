@@ -33,3 +33,6 @@ git status
 
 lsof -n -P -t -i:5000
 
+nohup python app.py >  /dev/null 2> /dev/null &  无限启动
+
+
