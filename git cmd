@@ -26,3 +26,7 @@ git push -u origin master
 
 git status
 备：详细请参考 http://www.cnblogs.com/tugenhua0707/p/4050072.html
+
+查看Centos端口命令： 
+# netstat -lntp #查看监听(Listen)的端口
+# netstat -antp #查看所有建立的TCP连接
