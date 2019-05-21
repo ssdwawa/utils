@@ -35,4 +35,10 @@ lsof -n -P -t -i:5000
 
 nohup python app.py >  /dev/null 2> /dev/null &  无限启动
 
+firewall-cmd --permanent --zone=public --add-port=3306/tcp
+
+通过systemctl start firewalld开启防火墙，没有任何提示即开启成功。
+
+如果要关闭防火墙设置，可能通过systemctl stop firewalld这条指令来关闭该功能。
+
 
