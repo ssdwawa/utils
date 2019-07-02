@@ -537,3 +537,7 @@ const checkeName = (e: any) => {
       }
     }, 500);
   };
+45.遍历字典对象
+   Object.entries(WorkFlowDrawStore.itemParam[WorkFlowDrawStore.choiceType]).map(([paramKey, paramValue], index: number) => (
+		    console.log(paramValue)
+		))
