@@ -542,7 +542,4 @@ const checkeName = (e: any) => {
 		    console.log(paramValue)
 		))
 		
-46.数据接近数组某一值
-	var percent = monthValue.sort(function(a, b) {
-    return Math.abs(a - position) - Math.abs(b - position);
-  })[0];
+
