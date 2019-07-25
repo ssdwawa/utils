@@ -440,4 +440,17 @@ const checkeName = (e: any) => {
     myArray = myArray.filter(function(el) {
       return !toRemove.includes(el);
     });
+    
+    高速版
+    const toRemoveMap = toRemove.reduce(
+      function(memo, item) {
+        memo[item] = memo[item] || true;
+        return memo;
+      },
+      {} // initialize an empty object
+    );
+
+    const filteredArray = myArray.filter(function(x) {
+      return !toRemoveMap[x];
+    });
 
