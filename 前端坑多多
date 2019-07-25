@@ -430,4 +430,14 @@ const checkeName = (e: any) => {
 		    console.log(paramValue)
 		))
 		
+46.数组删数组
+	// If I have this array:
+    var myArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+
+    // and this one:
+    var toRemove = ['b', 'c', 'g'];
+
+    myArray = myArray.filter(function(el) {
+      return !toRemove.includes(el);
+    });
 
