@@ -413,18 +413,16 @@ var val = json[keyArr[0]];
 43.金融三分位
 	toLocalstring()
 44.时间戳防抖
-const checkeName = (e: any) => {
-    e.persist();
-    lastTime = e.timeStamp;
-    //利用e的timeStamp来标记时间，这样每次事件都会修改last的值，注意last必需为全局变量
+ let lastTime = '';
+
+  function searchFun(value) {
+    lastTime = new Date().getTime();
     setTimeout(function() {
-      //设时延迟0.5s执行
-      if (lastTime - e.timeStamp == 0) {
-        //如果时间差为0（也就是你停止输入0.5s之内都没有其它的keyup事件发生）则做你想要做的事
-        console.log(e.target.value);
+      if (new Date().getTime() - lastTime >= 1000) {
+        Step2Control.searchInput(value);
       }
-    }, 500);
-  };
+    }, 1000);
+  }
 45.遍历字典对象
    Object.entries(WorkFlowDrawStore.itemParam[WorkFlowDrawStore.choiceType]).map(([paramKey, paramValue], index: number) => (
 		    console.log(paramValue)
