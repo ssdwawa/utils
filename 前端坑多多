@@ -452,3 +452,12 @@ var val = json[keyArr[0]];
       return !toRemoveMap[x];
     });
 
+47.插入一段结构
+var fragment = document.createDocumentFragment()
+for(let i = 0; i < 1000; i++){
+	let li = document.createElement('li')
+	li.innerHTML = '我是li标签'
+    fragment.appendChild(li)
+}
+root.appendChild(fragment);
+ 
