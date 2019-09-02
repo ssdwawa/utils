@@ -461,3 +461,7 @@ for(let i = 0; i < 1000; i++){
 }
 root.appendChild(fragment);
  
+48.找位置
+ let domIndex = 0;
+	while ((child = child.previousSibling) != null)
+    domIndex++;
