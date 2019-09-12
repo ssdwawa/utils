@@ -465,3 +465,19 @@ root.appendChild(fragment);
  let domIndex = 0;
 	while ((child = child.previousSibling) != null)
     domIndex++;
+49. 策略模式
+const type = this.options.series[0].type;
+this.chartInstance = new chartsType[type](
+	this.id,
+	this.options,
+	this.dataView
+);
+    
+const chartsType: { [index: string]: any } = {
+    basicBar: BasicBar,
+    basicLine: BasicLine,
+    scatter: BasicScatter,
+    basicArea: BasicArea,
+    groupBar:GroupBar
+};    
+    	   
