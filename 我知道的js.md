@@ -29,3 +29,14 @@ function NEW(fun) {
 var p = NEW(Person)('ssd', '26');
 
 ```
+
+# 2.防抖节流
+防抖：当持续触发事件时，一定时间段内没有再触发事件，事件处理函数才会执行一次
+```
+ const debounce = (fn, delay) => {
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    fn();
+                }, delay);
+            };
+```
