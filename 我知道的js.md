@@ -40,3 +40,24 @@ var p = NEW(Person)('ssd', '26');
                 }, delay);
             };
 ```
+节流：一段时间内只执行一次
+
+```
+function throttle(fn, delay) {
+    let last = 0;
+    return function() {
+        let curr = +new Date();
+        if (curr - last > delay) {
+            fn.apply(this, arguments);
+            last = curr;
+        }
+    };
+}
+            
+let pj = throttle(handle, 1000);
+
+var textElement = document.getElementById('test');
+textElement.oninput = function() {
+    pj('123');
+};
+```
