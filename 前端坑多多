@@ -315,6 +315,41 @@ table tr {
 table tr td {
 	display: block;
 }
+
+table 占多行
+<table className="table">
+    <thead>
+	<tr>
+	    <th>时间</th>
+	    <th>收支金额</th>
+	</tr>
+    </thead>
+
+    {mockData.leftData.map((rowdata: any[]) => {
+	return (
+	    <tbody>
+		<tr>
+		    <td rowSpan={rowdata[1].length}>
+			{rowdata[0]}
+		    </td>
+		    <td className="to-right">
+			{rowdata[1][0]}
+		    </td>
+
+		</tr>
+		{rowdata[1].length > 1 && rowdata[1].map((v: any[], index: number) => (
+		    (index != 0 && <tr className="to-right">
+			<td>
+			    {v}
+			</td>
+		    </tr>)
+		))}
+	    </tbody>
+	)
+    })}
+</table>
+
+
 34.滚动条不纠结
  window.scrollTo(0, 0);
  
