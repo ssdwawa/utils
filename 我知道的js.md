@@ -129,3 +129,39 @@ textElement.oninput = function() {
             }
 ```
 
+# 4.call,apply,bind
+
+call
+
+```
+ let Person = {
+    name: 'Tom',
+    say() {
+        console.log(this);
+        console.log(`我叫${this.name}`);
+    }
+};
+
+let Person1 = {
+    name: 'Tom1'
+};
+
+Function.prototype.myCall = function(context) {
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    context = context || window;
+    //原里很简单，传入的第一个参数是要绑定的函数，那么我们把这个函数的创建一个空间，
+    //并把this绑定到这个空间上，this指向调用者（这里指向Person.say）,随后执行这个函数
+    //此时这个this就绑到了context上了
+    context.fn = this;
+    const args = [...arguments].slice(1);
+    const result = context.fn(...args);
+    delete context.fn;
+    return result;
+};
+
+
+// 测试
+Person.say.myCall(Person1, 'ssd', 'ssd1'); //我叫Tom1
+```
