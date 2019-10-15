@@ -178,4 +178,20 @@ Function.prototype.myApply = function(context, args) {
     delete context.fn;
 };
 ```
+bind
 
+```
+ Function.prototype.myBind = function(context) {
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    context = context || window;
+    context.fn = this;
+
+    const args = [...arguments].splice(1);
+
+    return function() {
+        context.fn(...args);
+    };
+};
+```
