@@ -161,7 +161,21 @@ Function.prototype.myCall = function(context) {
     return result;
 };
 
-
 // 测试
 Person.say.myCall(Person1, 'ssd', 'ssd1'); //我叫Tom1
 ```
+apply
+
+```
+Function.prototype.myApply = function(context, args) {
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    context = context || window;
+    context.fn = this;
+
+    const result = context.fn(...args);
+    delete context.fn;
+};
+```
+
