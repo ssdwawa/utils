@@ -515,4 +515,4 @@ const chartsType: { [index: string]: any } = {
     basicArea: BasicArea,
     groupBar:GroupBar
 };    
-    	   
+50.字体引入不加引号
