@@ -128,6 +128,8 @@ textElement.oninput = function() {
                 return baseClone(value);
             }
 ```
+笔记：递归要注意 先写好递归的终止命令，再想好递归的结果，因为递归的最终结果和递归过程结果格式是一样的。再去写递归的逻辑
+
 
 # 4.call,apply,bind
 
