@@ -24,6 +24,16 @@ git pull --rebase origin master
 git push -u origin master
 *、状态查询命令
 
+7.创建新分支
+git checkout -b feature/* develop
+# 开发完成前
+git status
+git add [files which has been modified]
+git commit
+# 非协作功能分支不需要以下步骤
+git push origin feature/*
+
+
 git status
 备：详细请参考 http://www.cnblogs.com/tugenhua0707/p/4050072.html
 
