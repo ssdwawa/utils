@@ -197,3 +197,82 @@ bind
     };
 };
 ```
+# promise实现
+
+总结：iPromise类中分为reslove exec then三个部分
+
+reslove遍历fulArray执行，state设置为full
+exec把传递进来的参数放到constructor执行  
+then  return new iPromise ， 如果state为pending,push数组到arr里，push的是一个函数
+
+function (data) {
+            var x = onFulfilled(data)
+            //判断，如果这个函数内部还是Promise，则继续then
+            if (x instanceof Promise) {
+                        x.then(resolve)
+            }
+}
+
+```
+            <script>
+            class iPromise {
+                        constructor(exec) {
+                                    this.value = null;
+                                    this.reason = null;
+                                    this.state = 'pending';
+                                    this.fulArray = [];
+
+                                    const reslove = value => {
+                                                this.value = value;
+                                                this.state = 'full';
+                                                this.fulArray.forEach(fn => fn(this.value));
+                                    };
+
+                                    exec(reslove); // 执行传入的函数，而这个函数内部可以调用 同层的reslove
+                                    //执行顺序为promise内部的函数然后内部函数的reslove然后then中事件，若内部函数为异步则先执行then再执行内部
+                        }
+
+
+                        //对传递进来的函数做判断，若需要链式调用则在then内部执行的函数也要返回Promise，在异步状态下是将参数存到列表中
+                        then(onFulfilled) {
+                                    return new iPromise((resolve) => {
+                                                if (this.state === 'pending') {
+                                                            this.fulArray.push(function (data) {
+                                                                        var x = onFulfilled(data)
+                                                                        //判断，如果这个函数内部还是Promise，则继续then
+                                                                        if (x instanceof Promise) {
+                                                                                    x.then(resolve)
+                                                                        }
+                                                            });
+
+                                                } else if (this.state == 'full') {
+                                                            onFulfilled(value);
+                                                }
+
+                                    });
+                        };
+            }
+
+            //test
+
+            var A = new iPromise(reslove => {
+                        setTimeout(() => {
+                                    reslove(1);
+                        }, 10);
+            });
+
+            A.then(value => {
+                        console.log(value)
+                        return new Promise(
+                                    function (resolve) {
+                                                // 模拟异步请求
+                                                setTimeout(() => {
+                                                            resolve(15)
+                                                }, 1000);
+                                    }
+                        )
+            }).then(value => {
+                        console.log(value);
+            })
+            </script>
+```
