@@ -34,6 +34,7 @@ var p = NEW(Person)('ssd', '26');
 防抖：当持续触发事件时，一定时间段内没有再触发事件，事件处理函数才会执行一次
 ```
  const debounce = (fn, delay) => {
+                //定义一个全局的变量this.timer 每次执行都清除掉它，最后一次不清除了，延迟执行
                 clearTimeout(this.timer);
                 this.timer = setTimeout(() => {
                     fn();
@@ -44,6 +45,7 @@ var p = NEW(Person)('ssd', '26');
 
 ```
 function throttle(fn, delay) {
+     //定义一个初始时间，每次执行的时候记录上一次执行的时间，如果大于传入的延迟时间则执行函数
     let last = 0;
     return function() {
         let curr = +new Date();
