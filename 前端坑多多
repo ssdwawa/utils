@@ -537,3 +537,21 @@ const chartsType: { [index: string]: any } = {
         }
 52.二维数组去重
 Array.from(new Set(res.map(item => item.join('&')))).map(item => item.split('&'))
+
+53.终极pc适配
+html {
+    line-height: 1.15; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    font-size: 10vw;
+}
+@media screen and (max-width: 1200px) {
+    html {
+        font-size: 120px;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    html {
+        font-size: 192px;
+    }
+}
