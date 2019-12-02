@@ -555,3 +555,15 @@ html {
         font-size: 192px;
     }
 }
+
+54.flex 均匀换行
+	.super_b_list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between
+	}
+
+	.super_b_list div {
+		text-align: center;
+		flex: 0 0 25%;
+	}
