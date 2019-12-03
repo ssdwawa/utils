@@ -1,26 +1,4 @@
-//封装的ajax请求
-import Axios from 'axios';
 
-const getConfig = () => {
-    return {
-        headers:{
-            "Authorization": 'Bearer' + " " + localStorage.getItem('responseToken')
-        }
-    }
-}
-
-Axios.interceptors.response.use(response => {
-    return response;
-}, error => {
-    if (error && error.response) {
-        switch (error.response.status) {
-        case 400:
-            error.message = '错误请求';
-            break;
-        case 401:
-            error.message = '未授权，请重新登录';
-            window.location.href = '/login';
-            break;
 //封装的ajax请求
 import axios from 'axios';
 
