@@ -150,7 +150,7 @@ let Person1 = {
     name: 'Tom1'
 };
 
-Function.prototype.myCall = function(context) {
+Function.prototype.myCall = function(context,...args) {
     if (typeof this !== 'function') {
         throw new TypeError('Error');
     }
@@ -159,7 +159,6 @@ Function.prototype.myCall = function(context) {
     //并把this绑定到这个空间上，this指向调用者（这里指向Person.say）,随后执行这个函数
     //此时这个this就绑到了context上了
     context.fn = this;
-    const args = [...arguments].slice(1);
     const result = context.fn(...args);
     delete context.fn;
     return result;
@@ -277,4 +276,26 @@ function (data) {
                         console.log(value);
             })
             </script>
+```
+
+**all**
+```
+Promise.all = arr => {
+	let aResult = []; //用于存放每次执行后返回结果
+	return new Promise(function (resolve, reject) {
+		let i = 0;
+		next(); //开始逐次执行数组中的函数
+		function next() {
+			arr[i].then(function (res) {
+				aResult.push(res); //执行后返回的结果放入数组中
+				i++;
+				if (i == arr.length) { //如果函数数组中的函数都执行完，便把结果数组传给then
+					resolve(aResult);
+				} else {
+					next();
+				}
+			})
+		}
+	})
+}
 ```
