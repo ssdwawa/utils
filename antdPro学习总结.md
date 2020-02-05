@@ -1,0 +1,7 @@
+*路由和新建页面
+
+路由在config里面进行创建，总分总的路由形式，路由的模板或者自定义形式在component中
+子路由写在routes里，子路由的展示通过props.children
+新建页面通过在config里面配置好他的位置，在components定义好位置即可，一级路由在layout里二级的默认就在pages中
+
+*redux-saga
