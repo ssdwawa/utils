@@ -78,7 +78,20 @@ service.interceptors.response.use(
     }
 );
 
-export default service;
+const Ajax = {
+    get: url => {
+        return service.get( url )
+    },
+    post: ( url, params ) => {
+        return service.post( url, params )
+    },
+    delete: url => {
+        return service.delete( url )
+    }
+}
+
+export default Ajax;
+
 
 
 
