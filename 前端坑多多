@@ -272,6 +272,33 @@ function getQueryVariable(variable) {
       范围不可用
       	 disabledDate={(current) => (current && current < moment('2018-10-26').startOf('day') || current && current > moment('2018-10-26').endOf('day'))}
 	 
+	 startOf是包含今天  moment()为空就是今天
+	 
+	 如果分成俩个时间选择，互相恶心的话就设定state中starttime 和endtime
+	 
+	  disabledStartDate = startValue => {
+	    const { store } = this.props;
+	    const { param } = store;
+	    let { END_TIME } = this.state;
+
+	    if (!startValue || !END_TIME) {
+	      return startValue && startValue < moment().startOf('day');
+	    }
+	    return startValue.valueOf() > END_TIME.valueOf();
+	  };
+
+	  disabledEndDate = endValue => {
+	    const { store } = this.props;
+	    const { param } = store;
+	    let { START_TIME } = this.state;
+
+	    if (!endValue || !START_TIME) {
+	      return endValue && endValue < moment(param.START_TIME ? param.START_TIME : null).endOf('day');
+	    }
+	    return endValue.valueOf() <= START_TIME.valueOf();
+	  };
+	 
+	 
 30.react-mobx 渲染jsx
 	 const leadingRootCauseUI = leadingRootCause && leadingRootCause.data.map(v => {
 	    let element = null;
@@ -567,3 +594,117 @@ html {
 		text-align: center;
 		flex: 0 0 25%;
 	}
+56.rc-form
+
+getFieldDecorator initialValue 
+
+ setFieldsValue({
+      [`${id}texarea`]: text,
+    });
+    
+    select全选
+    
+     		<Form.Item>
+                  <div
+                    onMouseDown={e => {
+                      e.preventDefault();
+                      return false;
+                    }}
+                  >
+                    {getFieldDecorator(`${item.CHANNEL_ID}mul`, {
+                      rules: [
+                        {
+                          required: true,
+                          message: '预选信息不完整',
+                        },
+                      ],
+                      initialValue: item.DISTURB_LIST_TYPE || null,
+                      // valuePropName: "onSelect",
+                      // normalize:  this.normalizeAll
+                    })(
+                      <Select
+                        mode="multiple"
+                        style={{ width: 250 }}
+                        onChange={value =>
+                          this.handleStoreChange('multiple', item.CHANNEL_ID, value, type)
+                        }
+                        disabled={htype === 'unHandle' && true}
+                        maxTagCount={2}
+                        dropdownRender={menu => (
+                          <div>
+                            {menu}
+                            <Divider style={{ margin: '2px 0' }} />
+                            <div style={{ padding: '4px 8px 8px 8px', cursor: 'pointer' }}>
+                              <Checkbox
+                                checked={this[`${item.CHANNEL_ID}all`]}
+                                onClick={value => this.selectAll(value, item.CHANNEL_ID, type)}
+                              >
+                                全选
+                              </Checkbox>
+                            </div>
+                          </div>
+                        )}
+                      >
+                        <Option key={1} value="1001">
+                          黑名单
+                        </Option>
+                        <Option key={2} value="1002">
+                          红名单
+                        </Option>
+                        <Option key={3} value="1003">
+                          白名单
+                        </Option>
+                        <Option key={4} value="1004">
+                          高端用户名单
+                        </Option>
+                      </Select>,
+                    )}
+                  </div>
+                </Form.Item>
+		
+		______________________________________________________________________________________________
+		
+		 selectAll = (value, id, type) => {
+		    const { setFieldsValue, store } = this.props;
+		    const checked = value.target.checked;
+		    this[`${id}all`] = checked;
+		    if (checked) {
+		      let result = ['1001', '1002', '1003', '1004'];
+
+		      store.param[type].map(item => {
+			if (item.CHANNEL_ID === id) {
+			  item.DISTURB_LIST_TYPE = result;
+			}
+		      });
+
+		      setFieldsValue({
+			[`${id}mul`]: result,
+		      });
+		    } else {
+		      setFieldsValue({
+			[`${id}mul`]: [],
+		      });
+		    }
+		  };
+		  
+		  
+		   handleStoreChange = (type, id, value, wordType, name) => {
+		    const { store } = this.props;
+
+		    let SetValue = value.target ? value.target.value : value;
+
+		    if (type === 'multiple') {
+		      this[`${id}all`] = false;
+		      store.param[wordType].map(item => {
+			if (item.CHANNEL_ID === id) {
+			  item.DISTURB_LIST_TYPE = SetValue;
+			}
+		      });
+		    } else {
+		      store.param[wordType].map(item => {
+			if (item.CHANNEL_ID === id) item[name] = SetValue.toString();
+		      });
+		    }
+		  };
+
+
