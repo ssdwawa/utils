@@ -708,3 +708,29 @@ getFieldDecorator initialValue
 		  };
 
 
+57.js判断旋转方向
+if (startPosX) {
+            pointC.X = touch.clientX;
+            pointC.Y = touch.clientY; // 获取结束点坐标
+            var AB = {};
+            var AC = {};
+            AB.X = pointB.X - pointA.X;
+            AB.Y = pointB.Y - pointA.Y;
+            AC.X = pointC.X - pointA.X;
+            AC.Y = pointC.Y - pointA.Y; // 分别求出AB,AC的向量坐标表示
+            var direct = AB.X * AC.Y - AB.Y * AC.X; // AB与AC叉乘求出逆时针还是顺时针旋转
+
+            if (direct > 0) {
+              img.style.transform = `rotate(${Number(beforeAngele) + 2.5}deg)`;
+            } else {
+              img.style.transform = `rotate(${Number(beforeAngele) - 2.5}deg)`;
+            }
+
+            pointB.X = pointC.X;
+            pointB.Y = pointC.Y;
+
+            var changeMp = Math.round((beforeAngele % 360) / 36);
+
+            setPanPoint(changeMp);
+          }
+
