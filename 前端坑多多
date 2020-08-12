@@ -553,9 +553,11 @@ var val = json[keyArr[0]];
  let lastTime = '';
 
   function searchFun(value) {
-    lastTime = new Date().getTime();
+  
     setTimeout(function() {
-      if (new Date().getTime() - lastTime >= 1000) {
+     
+      if (!lastTime || new Date().getTime() - lastTime >= 1000) {
+       lastTime = new Date().getTime();
         Step2Control.searchInput(value);
       }
     }, 1000);
